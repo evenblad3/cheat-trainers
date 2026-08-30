@@ -54,9 +54,13 @@ uintptr_t hack::FindDMAAddy(HANDLE hproc, uintptr_t ptr, std::vector<unsigned in
 	uintptr_t addr = ptr;
 	for (unsigned int i = 0; i < offsets.size(); ++i)
 	{
-		ReadProcessMemory(hproc, (BYTE*)addr, &addr, sizeof(addr), 0);
+		SIZE_T bytesRead = 0;
+		if (!ReadProcessMemory(hproc, (BYTE*)addr, &addr, sizeof(addr), &bytesRead))
+		{
+			return 0;
+		}
+
 		addr += offsets[i];
 	}
 	return addr;
-	return 0;
 }

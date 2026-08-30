@@ -1,3 +1,7 @@
+/*
+* Most UI stuff is here...
+*/
+
 #include "gui.hpp"
 #include "hack.hpp"
 
@@ -45,34 +49,43 @@ LRESULT CALLBACK WindowProcess(
 	case WM_LBUTTONDOWN:
 	{
 		gui::position = MAKEPOINTS(longParameter);
+
+		if (gui::position.y >= 0 && gui::position.y <= 19)
+		{
+			gui::dragging = true;
+		}
+
+	} return 0;
+
+	case WM_LBUTTONUP:
+	{
+		gui::dragging = false;
 	} return 0;
 
 	case WM_MOUSEMOVE:
 	{
-		if (wideParameter == MK_LBUTTON)
+		if (gui::dragging && (wideParameter & MK_LBUTTON))
 		{
 			const auto points = MAKEPOINTS(longParameter);
-			auto rect = ::RECT{};
+			auto rect = RECT{};
 
 			GetWindowRect(gui::window, &rect);
 
 			rect.left += points.x - gui::position.x;
 			rect.top += points.y - gui::position.y;
 
-			if (
-				gui::position.x >= 0 &&
-				gui::position.x <= gui::WIDTH &&
-				gui::position.y >= 0 && gui::position.y >= 19
-				)
-				SetWindowPos(
-					gui::window,
-					HWND_TOPMOST,
-					rect.left,
-					rect.top,
-					0, 0,
-					SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOZORDER
-				);
+			SetWindowPos(
+				gui::window,
+				nullptr,
+				rect.left,
+				rect.top,
+				0,
+				0,
+				SWP_NOSIZE | SWP_NOZORDER
+			);
 		}
+
+		return 0;
 	}
 
 	}
@@ -232,14 +245,14 @@ void gui::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
-	ImGui::Begin("ayo dawggg", &exit,
+	ImGui::Begin("Assault Cube Trainer", &exit,
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoSavedSettings |
 		ImGuiWindowFlags_NoCollapse
 	);
 
-	/* UI start */
+	// UI start
 	DWORD procId = hack::GetProcId(L"ac_client.exe");
 	HANDLE hProcess = 0;
 	hProcess = OpenProcess(PROCESS_ALL_ACCESS, NULL, procId);
@@ -252,24 +265,53 @@ void gui::Render() noexcept
 		// variables
 		float currentFOV = 0;
 		static bool infiniteAmmo = false;
-		static float FOV = 0;
+		static float FOV = 140;
+		int tripleNine = 999;
 
-		// offsets n addr
 		uintptr_t fovAddr = moduleBase + 0x18A7CC;
+
+		// assault rifle
+		int currentAssaultRifleAmmo = 0;
 		std::vector<unsigned int>assaultRifleAmmoOffset{ 0x140 };
+		uintptr_t assaultRifleAmmoAddr = hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, assaultRifleAmmoOffset);
+		ReadProcessMemory(hProcess, (BYTE*)assaultRifleAmmoAddr, &currentAssaultRifleAmmo, sizeof(float), nullptr);
+
+		// pistol
+		int currentPistolAmmo = 0;
 		std::vector<unsigned int>pistolAmmoOffset{ 0x12C };
+		uintptr_t pistolAmmoAddr = hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, pistolAmmoOffset);
+		ReadProcessMemory(hProcess, (BYTE*)pistolAmmoAddr, &currentPistolAmmo, sizeof(float), nullptr);
+
+		// submachine
+		int currentSubmachineAmmo = 0;
+		std::vector<unsigned int>submachineOffset{ 0x138 };
+		uintptr_t submachineAmmoAddr = hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, submachineOffset);
+		ReadProcessMemory(hProcess, (BYTE*)submachineAmmoAddr, &currentSubmachineAmmo, sizeof(float), nullptr);
 
 		ReadProcessMemory(hProcess, (BYTE*)fovAddr, &currentFOV, sizeof(float), nullptr);
-
+		
 		ImGui::Text("Current FOV: %.1f", currentFOV);
-		ImGui::Separator();
+		ImGui::Checkbox("Infinite Ammo", &infiniteAmmo);
+		ImGui::Text("Pistol Ammo: %d", currentPistolAmmo);
+		ImGui::Text("Assault Rifle Ammo: %d", currentAssaultRifleAmmo);
+		ImGui::Text("Submachine Ammo: %d", currentSubmachineAmmo);
 
+		if (infiniteAmmo)
+		{
+			WriteProcessMemory(hProcess, (BYTE*)assaultRifleAmmoAddr, &tripleNine, sizeof(tripleNine), nullptr);
+			WriteProcessMemory(hProcess, (BYTE*)pistolAmmoAddr, &tripleNine, sizeof(tripleNine), nullptr);
+			WriteProcessMemory(hProcess, (BYTE*)submachineAmmoAddr, &tripleNine, sizeof(tripleNine), nullptr);
+		}
+
+		ImGui::SliderFloat("FOV", &FOV, 20, 175);
+		WriteProcessMemory(hProcess, (BYTE*)(moduleBase + 0x18A7CC), &FOV, sizeof(float), nullptr);
+		
 	}
 	else
 	{
 		ImGui::Text("Unable to find Assault Cube...");
 	}
-	/* UI start */
-
+	// UI end
+	CloseHandle(hProcess);
 	ImGui::End();
 }

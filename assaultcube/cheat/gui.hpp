@@ -13,6 +13,7 @@ namespace gui
 	inline HWND window = nullptr;
 	inline WNDCLASSEXA windowClass = {};
 
+	inline bool dragging = false;
 	inline POINTS position = {};
 
 	inline PDIRECT3D9 d3d = nullptr;
