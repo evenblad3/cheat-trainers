@@ -288,23 +288,104 @@ void gui::Render() noexcept
 		uintptr_t submachineAmmoAddr = hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, submachineOffset);
 		ReadProcessMemory(hProcess, (BYTE*)submachineAmmoAddr, &currentSubmachineAmmo, sizeof(float), nullptr);
 
-		ReadProcessMemory(hProcess, (BYTE*)fovAddr, &currentFOV, sizeof(float), nullptr);
-		
-		ImGui::Text("Current FOV: %.1f", currentFOV);
-		ImGui::Checkbox("Infinite Ammo", &infiniteAmmo);
-		ImGui::Text("Pistol Ammo: %d", currentPistolAmmo);
-		ImGui::Text("Assault Rifle Ammo: %d", currentAssaultRifleAmmo);
-		ImGui::Text("Submachine Ammo: %d", currentSubmachineAmmo);
+		// sniper
+		int currentSniperAmmo = 0;
+		std::vector<unsigned int>sniperOffset{ 0x13C };
+		uintptr_t sniperAmmoAddr = hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, sniperOffset);
+		ReadProcessMemory(hProcess, (BYTE*)sniperAmmoAddr, &currentSniperAmmo, sizeof(float), nullptr);
 
+		// shotgun
+		int currentShotgunAmmo = 0;
+		std::vector<unsigned int>shotgunOffset{ 0x134 };
+		uintptr_t shotgunAmmoAddr = hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, shotgunOffset);
+		ReadProcessMemory(hProcess, (BYTE*)shotgunAmmoAddr, &currentShotgunAmmo, sizeof(float), nullptr);
+
+		// grenade
+		int currentGrenadeAmmo = 0;
+		std::vector<unsigned int>grenadeOffset{ 0x144 };
+		uintptr_t grenadeAmmoAddr = hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, grenadeOffset);
+		ReadProcessMemory(hProcess, (BYTE*)grenadeAmmoAddr, &currentGrenadeAmmo, sizeof(float), nullptr);
+
+		auto HelpMarker = [](const char* desc)
+		{
+			ImGui::TextDisabled("(?)");
+			if (ImGui::BeginItemTooltip())
+			{
+				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+				ImGui::TextUnformatted(desc);
+				ImGui::PopTextWrapPos();
+				ImGui::EndTooltip();
+			}
+		};
+
+		static char currentNickname[32] = "NOT_INIT";
+		static char nicknameBuf[32] = "*Click Refresh*";
+		std::vector<unsigned int>nicknameOffset{ 0x205 };
+		uintptr_t nicknameAddr = hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, nicknameOffset);
+		ReadProcessMemory(hProcess, (BYTE*)nicknameAddr, &currentNickname, sizeof(currentNickname), nullptr);
+		ImGui::Text("Current Nickname: %s", currentNickname);
+		ImGui::InputText("Player Nickname", nicknameBuf, IM_COUNTOF(nicknameBuf));
+		ImGui::SameLine(); HelpMarker("Infinite Ammo for all weapons.");
+		if (ImGui::Button("Set Nickname"))
+		{
+			WriteProcessMemory(hProcess, (BYTE*)nicknameAddr, &nicknameBuf, sizeof(nicknameBuf), nullptr);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Refresh"))
+		{
+			ReadProcessMemory(hProcess, (BYTE*)nicknameAddr, &nicknameBuf, sizeof(nicknameBuf), nullptr);
+		}
+
+		ImGui::Spacing();
+		ImGui::Checkbox("Infinite Ammo", &infiniteAmmo);
 		if (infiniteAmmo)
 		{
 			WriteProcessMemory(hProcess, (BYTE*)assaultRifleAmmoAddr, &tripleNine, sizeof(tripleNine), nullptr);
 			WriteProcessMemory(hProcess, (BYTE*)pistolAmmoAddr, &tripleNine, sizeof(tripleNine), nullptr);
 			WriteProcessMemory(hProcess, (BYTE*)submachineAmmoAddr, &tripleNine, sizeof(tripleNine), nullptr);
+			WriteProcessMemory(hProcess, (BYTE*)sniperAmmoAddr, &tripleNine, sizeof(tripleNine), nullptr);
+			WriteProcessMemory(hProcess, (BYTE*)shotgunAmmoAddr, &tripleNine, sizeof(tripleNine), nullptr);
+			WriteProcessMemory(hProcess, (BYTE*)grenadeAmmoAddr, &tripleNine, sizeof(tripleNine), nullptr);
 		}
 
-		ImGui::SliderFloat("FOV", &FOV, 20, 175);
-		WriteProcessMemory(hProcess, (BYTE*)(moduleBase + 0x18A7CC), &FOV, sizeof(float), nullptr);
+		static bool rapidFiring = false;
+		ImGui::Checkbox("Rapid Firing", &rapidFiring);
+		if (rapidFiring)
+		{
+			short int fast = 1;
+
+			// assault rifle
+			std::vector<unsigned int>assaultRifleRapidFireOffset{ 0x164 };
+			WriteProcessMemory(
+				hProcess, (BYTE*)hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, assaultRifleRapidFireOffset),
+				&fast, sizeof(fast), nullptr
+			);
+
+			// sniper
+			std::vector<unsigned int>sniperRapidFireOffset{ 0x160 };
+			WriteProcessMemory(
+				hProcess, (BYTE*)hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, sniperRapidFireOffset),
+				&fast, sizeof(fast), nullptr
+			);
+
+			// shotgun
+			std::vector<unsigned int>shotgunRapidFireOffset{ 0x158 };
+			WriteProcessMemory(
+				hProcess, (BYTE*)hack::FindDMAAddy(hProcess, dynamicPtrBaseAddr, shotgunRapidFireOffset),
+				&fast, sizeof(fast), nullptr
+			);
+		}
+
+		ReadProcessMemory(hProcess, (BYTE*)fovAddr, &currentFOV, sizeof(float), nullptr);
+		ImGui::SliderFloat("FOV", &currentFOV, 20, 175);
+		WriteProcessMemory(hProcess, (BYTE*)(moduleBase + 0x18A7CC), &currentFOV, sizeof(float), nullptr);
+
+		ImGui::Spacing();
+		ImGui::Text("Pistol Ammo: %d", currentPistolAmmo);
+		ImGui::Text("Assault Rifle Ammo: %d", currentAssaultRifleAmmo);
+		ImGui::Text("Submachine Ammo: %d", currentSubmachineAmmo);
+		ImGui::Text("Sniper Ammo %d", currentSniperAmmo);
+		ImGui::Text("Grenade Ammo %d", currentGrenadeAmmo);
 		
 	}
 	else
