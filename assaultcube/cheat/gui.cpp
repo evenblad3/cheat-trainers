@@ -257,6 +257,10 @@ void gui::Render() noexcept
 	HANDLE hProcess = 0;
 	hProcess = OpenProcess(PROCESS_ALL_ACCESS, NULL, procId);
 
+	/*
+	* Most of the offsets are obtained from
+	* https://github.com/Silme94/Assault-Cube-1.3.0.2-Offsets
+	*/
 	if (procId && hProcess)
 	{
 		uintptr_t moduleBase = hack::GetModuleBaseAddress(procId, L"ac_client.exe");
