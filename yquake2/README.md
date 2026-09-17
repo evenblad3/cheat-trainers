@@ -31,3 +31,6 @@ Sizes here suggests a better way to access them, doesn't really mean you have to
 | **grenadesMax** | `localPlayerAddr` | `inventory` + `0x6F0` | 4
 | **cellsMax** | `localPlayerAddr` | `inventory` + `0x6F4` | 4
 | **slugsMax** | `localPlayerAddr` | `inventory` + `0x6F8` | 4
+
+## Credits
+Standalone code from https://github.com/adamhlt/ImGui-Standalone
