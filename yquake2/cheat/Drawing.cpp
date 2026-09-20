@@ -32,8 +32,21 @@ void Drawing::Draw()
 					// level information
 					ImGui::SeparatorText("Level Information");
 					ImGui::Text("Map Name: base1");
+
+					// player information
+					ImGui::SeparatorText("Player Information");
 					ImGui::Text("Player Name: Bitterman");
-					
+					static int playerHealth = 99;
+					ImGui::Text("Player Health: %d%", playerHealth);
+					enum Coord { X = 0, Y = 1, Z = 2 };
+					static float playerCoords[3] = { 123.0f, 456.0f, 789.0f };
+					ImGui::Text(
+						"Player Position [%0.0f, %0.0f, %0.0f]",
+						playerCoords[X],
+						playerCoords[Y],
+						playerCoords[Z]
+					);
+
 					// Settings
 					ImGui::SeparatorText("Settings");
 					static int playerFOV = 90;
@@ -61,6 +74,7 @@ void Drawing::Draw()
 					static int cells    = 100;
 					ImGui::Text("Cells: %d", cells);
 
+					ImGui::Spacing();
 					static bool infiniteAmmo = false;
 					ImGui::Checkbox("Infinite Ammo", &infiniteAmmo);
 
