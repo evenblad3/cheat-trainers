@@ -1,4 +1,5 @@
 #include "Drawing.h"
+#include "gamestate.hpp"
 
 LPCSTR Drawing::lpWindowName = "Yamagi Quake II Trainer";
 ImVec2 Drawing::vWindowSize = { 640, 480 };
@@ -36,8 +37,7 @@ void Drawing::Draw()
 					// player information
 					ImGui::SeparatorText("Player Information");
 					ImGui::Text("Player Name: Bitterman");
-					static int playerHealth = 99;
-					ImGui::Text("Player Health: %d%", playerHealth);
+					ImGui::Text("Player Health: %d%", g_state.playerHealth);
 					enum Coord { X = 0, Y = 1, Z = 2 };
 					static float playerCoords[3] = { 123.0f, 456.0f, 789.0f };
 					ImGui::Text(
@@ -46,6 +46,10 @@ void Drawing::Draw()
 						playerCoords[Y],
 						playerCoords[Z]
 					);
+
+					// Hacks
+					ImGui::SeparatorText("Hacks");
+					ImGui::Checkbox("God Mode", &g_state.godmode);
 
 					// Settings
 					ImGui::SeparatorText("Settings");

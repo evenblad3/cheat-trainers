@@ -1,4 +1,6 @@
 #include "UI.h"
+#include "cheat.hpp"
+#include "hack.hpp"
 
 #ifdef _WINDLL
 
@@ -23,8 +25,12 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nShowCmd)
 {
+    auto m = std::make_unique<Memory>();
+    std::thread mThread(UpdateGameState, std::ref(*m));
     UI::Render();
-
+    if (mThread.joinable()) {
+        mThread.join();
+    }
     return 0;
 }
 
