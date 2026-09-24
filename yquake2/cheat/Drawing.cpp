@@ -38,13 +38,11 @@ void Drawing::Draw()
 					ImGui::SeparatorText("Player Information");
 					ImGui::Text("Player Name: Bitterman");
 					ImGui::Text("Player Health: %d%", g_state.playerHealth);
-					enum Coord { X = 0, Y = 1, Z = 2 };
-					static float playerCoords[3] = { 123.0f, 456.0f, 789.0f };
 					ImGui::Text(
-						"Player Position [%0.0f, %0.0f, %0.0f]",
-						playerCoords[X],
-						playerCoords[Y],
-						playerCoords[Z]
+						"Player Position [%0.00f, %0.00f, %0.00f]",
+						g_state.playerCoords[g_state.Coord::X],
+						g_state.playerCoords[g_state.Coord::Y],
+						g_state.playerCoords[g_state.Coord::Z]
 					);
 
 					// Hacks
