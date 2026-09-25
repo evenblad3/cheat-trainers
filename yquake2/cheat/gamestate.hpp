@@ -20,6 +20,11 @@ namespace Offsets {
     constexpr std::ptrdiff_t Cells	 = 0x334;
     constexpr std::ptrdiff_t Rockets = 0x338;
     constexpr std::ptrdiff_t Slugs	 = 0x33C;
+    constexpr std::ptrdiff_t quadDamage      = 0x340;
+    constexpr std::ptrdiff_t invulnerability = 0x344;
+    constexpr std::ptrdiff_t silencer        = 0x348;
+    constexpr std::ptrdiff_t rebreather      = 0x34C;
+    constexpr std::ptrdiff_t environmentSuit = 0x350;
 }
 
 struct GameState {
@@ -38,6 +43,11 @@ struct GameState {
     int cells = 0;
     int rockets = 0;
     int slugs = 0;
+    bool quadDamage = false;
+    bool invulnuerability = false;
+    bool silencer = false;
+    bool rebreather = false;
+    bool environmentSuit = false;
 };
 
 inline GameState g_state;

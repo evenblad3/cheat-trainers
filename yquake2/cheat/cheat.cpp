@@ -49,6 +49,28 @@ void UpdateGameState(Memory& memory)
                 memory.Write<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Rockets }),  999);
                 memory.Write<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Slugs }),    999);
             }
+
+            // items
+            memory.Read<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::quadDamage }));
+            if (g_state.quadDamage)
+                memory.Write<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::quadDamage }), true);
+
+            memory.Read<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory, Offsets::invulnerability }));
+            if (g_state.invulnuerability)
+                memory.Write<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::invulnerability }), true);
+
+            memory.Read<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory, Offsets::silencer }));
+            if (g_state.silencer)
+                memory.Write<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::silencer }), true);
+
+            memory.Read<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory, Offsets::rebreather }));
+            if (g_state.rebreather)
+                memory.Write<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::rebreather }), true);
+
+            memory.Read<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory, Offsets::environmentSuit }));
+            if (g_state.environmentSuit)
+                memory.Write<bool>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::environmentSuit }), true);
+
         }
         catch (const std::exception&) {}
 

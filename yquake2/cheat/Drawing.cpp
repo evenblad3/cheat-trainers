@@ -75,20 +75,11 @@ void Drawing::Draw()
 
 					// items
 					ImGui::SeparatorText("Items");
-					static bool hasQuadDamage = false;
-					ImGui::Checkbox("Quad Damage", &hasQuadDamage);
-					
-					static bool hasInvulnerability = false;
-					ImGui::Checkbox("Invulnerability", &hasInvulnerability);
-
-					static bool hasSilencer = false;
-					ImGui::Checkbox("Silencer", &hasSilencer);
-
-					static bool hasRebreather = false;
-					ImGui::Checkbox("Rebreather", &hasRebreather);
-					
-					static bool hasEnvironmentSuit = false;
-					ImGui::Checkbox("EnvironmentSuit", &hasEnvironmentSuit);
+					ImGui::Checkbox("Quad Damage", &g_state.quadDamage);
+					ImGui::Checkbox("Invulnerability", &g_state.invulnuerability);
+					ImGui::Checkbox("Silencer", &g_state.silencer);
+					ImGui::Checkbox("Rebreather", &g_state.rebreather);
+					ImGui::Checkbox("EnvironmentSuit", &g_state.environmentSuit);
 
 					ImGui::EndTabItem();
 				}

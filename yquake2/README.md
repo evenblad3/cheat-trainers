@@ -23,7 +23,7 @@ Sizes here suggests a better way to access them, doesn't really mean you have to
 | **quadDamage** | `localPlayerAddr` | `inventory` + `0x340` | bool
 | **invulnerability** | `localPlayerAddr` | `inventory` + `0x344` | bool
 | **silencer** | `localPlayerAddr` | `inventory` + `0x348` | bool
-| **rebreather** | `localPlayerAddr` | `inventory` + `0x344` | bool
+| **rebreather** | `localPlayerAddr` | `inventory` + `0x34C` | bool
 | **environmentSuit** | `localPlayerAddr` | `inventory` + `0x350` | bool
 | **bulletsMax** | `localPlayerAddr` | `inventory` + `0x6E4` | 4
 | **shellsMax** | `localPlayerAddr` | `inventory` + `0x6E8` | 4
