@@ -31,6 +31,24 @@ void UpdateGameState(Memory& memory)
             g_state.playerCoords[g_state.Coord::X] = memory.Read<std::float_t>(entity + Offsets::AxisX);
             g_state.playerCoords[g_state.Coord::Y] = memory.Read<std::float_t>(entity + Offsets::AxisY);
             g_state.playerCoords[g_state.Coord::Z] = memory.Read<std::float_t>(entity + Offsets::AxisZ);
+
+            // read ammo
+            g_state.grenades = memory.Read<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Grenades }));
+            g_state.shells =   memory.Read<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Shells }));
+            g_state.bullets =  memory.Read<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Bullets}));
+            g_state.cells =    memory.Read<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory ,  Offsets::Cells}));
+            g_state.rockets =  memory.Read<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Rockets }));
+            g_state.slugs =    memory.Read<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Slugs}));
+
+            // infinite ammo
+            if (g_state.infiniteAmmo) {
+                memory.Write<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Grenades }), 999);
+                memory.Write<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Shells }),   999);
+                memory.Write<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Bullets }),  999);
+                memory.Write<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Cells }),    999);
+                memory.Write<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Rockets }),  999);
+                memory.Write<std::int32_t>(memory.ResolvePointerChain(entity, { Offsets::Inventory , Offsets::Slugs }),    999);
+            }
         }
         catch (const std::exception&) {}
 

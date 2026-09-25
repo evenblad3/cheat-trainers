@@ -63,22 +63,15 @@ void Drawing::Draw()
 
 					// ammo
 					ImGui::SeparatorText("Ammo");
-					static int shells = 95;
-					ImGui::Text("Shells: %d", shells);
-					static int bullets  = 96;
-					ImGui::Text("Bullets: %d", bullets);
-					static int grenades = 97;
-					ImGui::Text("Grenades: %d", grenades);
-					static int rockets  = 98;
-					ImGui::Text("Rockets: %d", rockets);
-					static int slugs    = 99;
-					ImGui::Text("Slugs: %d", slugs);
-					static int cells    = 100;
-					ImGui::Text("Cells: %d", cells);
+					ImGui::Text("Shells: %d", g_state.shells);
+					ImGui::Text("Bullets: %d", g_state.bullets);
+					ImGui::Text("Grenades: %d", g_state.grenades);
+					ImGui::Text("Rockets: %d", g_state.rockets);
+					ImGui::Text("Slugs: %d", g_state.slugs);
+					ImGui::Text("Cells: %d", g_state.cells);
 
 					ImGui::Spacing();
-					static bool infiniteAmmo = false;
-					ImGui::Checkbox("Infinite Ammo", &infiniteAmmo);
+					ImGui::Checkbox("Infinite Ammo", &g_state.infiniteAmmo);
 
 					// items
 					ImGui::SeparatorText("Items");
